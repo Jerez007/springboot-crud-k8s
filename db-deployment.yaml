@@ -35,28 +35,34 @@ spec:
         tier: database
     spec:
       containers:
-        - image: mysql:5.7 # image from docker-hub
-          args:
-            - "--ignore-db-dir=lost+found" # Workaround for https://github.com/docker-library/mysql/issues/186
+        - image: mysql:latest # image from docker-hub
+#          args:
+#            - "--ignore-db-dir=lost+found" # Workaround for https://github.com/docker-library/mysql/issues/186
+#          args:
+#            - "--skip-grant-tables"s
           name: mysql
           env:
             - name: MYSQL_ROOT_PASSWORD
-              valueFrom :
-                secretKeyRef :
-                  name : mysql-secrets
-                  key :  password
+              value: root
+            - name: MYSQL_DATABASE
+              value: javatechie
+#            - name: MYSQL_ALLOW_HOSTS
+#              value: 10.244.0.0/24, 127.0.0.1
+#            - name: MYSQL_ROOT_PASSWORD
+#              valueFrom :
+#                secretKeyRef :
+#                  name : mysql-secrets
+#                  key :  password
 
-            - name: MYSQL_DATABASE # Setting Database Name from a 'ConfigMap'
-              valueFrom :
-                configMapKeyRef :
-                  name : db-config
-                  key :  dbName
-
-
+#            - name: MYSQL_DATABASE # Setting Database Name from a 'ConfigMap'
+#              valueFrom :
+#                configMapKeyRef :
+#                  name : db-config
+#                  key :  dbName
           ports:
             - containerPort: 3306
               name: mysql
-          volumeMounts:        # Mounting voulume obtained from Persistent Volume Claim
+          volumeMounts:        # Mounting volume obtained from Persistent Volume Claim
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql #This is the path in the container on which the mounting will take place.
       volumes:
